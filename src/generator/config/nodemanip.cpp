@@ -283,7 +283,7 @@ void filterNodes(std::vector<Proxy> &nodes, string_array &exclude_remarks, strin
         }
         else
         {
-            writeLog(LOG_TYPE_INFO, "Node  " + iter->Group + " - " + iter->Remark + "  has been added." + iter.Path);
+            writeLog(LOG_TYPE_INFO, "Node  " + iter->Group + " - " + iter->Remark + "  has been added." + iter->Path);
             iter->Id = node_index;
             iter->GroupId = groupID;
             ++node_index;
