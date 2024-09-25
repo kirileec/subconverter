@@ -2107,7 +2107,9 @@ static rapidjson::Value buildSingBoxTransport(const Proxy& proxy, rapidjson::Mem
             if (proxy.Path.empty())
                 transport.AddMember("path", "/", allocator);
             else
-                transport.AddMember("path", rapidjson::StringRef(processedPath.c_str()), allocator);
+                rapidjson::Value value(rapidjson::kStringType);
+                value.SetString(processedPath.c_str(), (int)processedPath.size(), allocator);
+                transport.AddMember("path", value, allocator);
 
             rapidjson::Value headers(rapidjson::kObjectType);
             if (!proxy.Host.empty())
