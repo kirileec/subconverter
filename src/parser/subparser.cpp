@@ -7,6 +7,7 @@
 #include "utils/rapidjson_extra.h"
 #include "utils/regexp.h"
 #include "utils/string.h"
+#include "utils/logger.h"
 #include "utils/string_hash.h"
 #include "utils/urlencode.h"
 #include "utils/yamlcpp_extra.h"
