@@ -191,7 +191,6 @@ void explodeVmess(std::string vmess, Proxy &node)
         }
         break;
     case 2:
-        writeLog(0,"jsondata => "+jsondata);
         path = GetMember(jsondata, "path");
         writeLog(0,"path => "+path);
         break;
