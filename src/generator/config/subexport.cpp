@@ -3,7 +3,7 @@
 #include <numeric>
 #include <cmath>
 #include <climits>
-
+#include <regex>
 #include "config/regmatch.h"
 #include "generator/config/subexport.h"
 #include "generator/template/templates.h"
@@ -2070,9 +2070,31 @@ static std::string formatSingBoxInterval(Integer interval)
     return result;
 }
 
+static std::string removeQueryParam(const std::string& url, const std::string& param) 
+{
+    std::string newUrl = url;
+    std::regex paramRegex("([?&])" + param + "=[^&]*");
+    
+    // Remove the param from the URL
+    newUrl = std::regex_replace(newUrl, paramRegex, "$1");
+
+    // If the URL ends with a `?` or `&`, clean it up
+    if (newUrl.back() == '?' || newUrl.back() == '&') {
+        newUrl.pop_back();
+    }
+    
+    return newUrl;
+}
+
 static rapidjson::Value buildSingBoxTransport(const Proxy& proxy, rapidjson::MemoryPoolAllocator<>& allocator)
 {
     rapidjson::Value transport(rapidjson::kObjectType);
+    std::string processedPath = proxy.Path;
+
+    // If the path contains "?ed=2048", remove "ed" query parameter
+    if (!proxy.Path.empty()) {
+        processedPath = removeQueryParam(proxy.Path, "ed");
+    }
     switch (hash_(proxy.TransferProtocol))
     {
         case "http"_hash:
@@ -2087,7 +2109,9 @@ static rapidjson::Value buildSingBoxTransport(const Proxy& proxy, rapidjson::Mem
             if (proxy.Path.empty())
                 transport.AddMember("path", "/", allocator);
             else
-                transport.AddMember("path", rapidjson::StringRef(proxy.Path.c_str()), allocator);
+                std::string processedPath = proxy.Path;
+                processedPath = removeQueryParam(proxy.Path, "ed");
+                transport.AddMember("path", rapidjson::StringRef(processedPath.c_str()), allocator);
 
             rapidjson::Value headers(rapidjson::kObjectType);
             if (!proxy.Host.empty())
