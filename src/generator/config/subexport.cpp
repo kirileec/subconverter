@@ -2070,23 +2070,27 @@ static std::string formatSingBoxInterval(Integer interval)
     return result;
 }
 
-static std::string removeQueryParam(const std::string& url)
+static std::string replaceQueryParam(const std::string& url, const std::string& target)
 {
-    // Find the position of the first '?' character
-    size_t pos = url.find('?');
+    std::string newUrl = url;
     
-    // If '?' is found, return the substring before it, otherwise return the full URL
+    // Find and replace the target query string
+    size_t pos = newUrl.find(target);
     if (pos != std::string::npos) {
-        return url.substr(0, pos);
+        newUrl.replace(pos, target.length(), ""); // Replace the target with an empty string
     }
     
-    return url;
+    return newUrl;
 }
 
 static rapidjson::Value buildSingBoxTransport(const Proxy& proxy, rapidjson::MemoryPoolAllocator<>& allocator)
 {
     rapidjson::Value transport(rapidjson::kObjectType);
     std::string processedPath = proxy.Path;
+    // Replace "?ed=2048" with an empty string
+    if (!proxy.Path.empty()) {
+        processedPath = replaceQueryParam(proxy.Path, "?ed=2048");
+    }
     switch (hash_(proxy.TransferProtocol))
     {
         case "http"_hash:
@@ -2101,7 +2105,6 @@ static rapidjson::Value buildSingBoxTransport(const Proxy& proxy, rapidjson::Mem
             if (proxy.Path.empty())
                 transport.AddMember("path", "/", allocator);
             else
-                processedPath = removeQueryParam(proxy.Path);
                 transport.AddMember("path", rapidjson::StringRef(processedPath.c_str()), allocator);
 
             rapidjson::Value headers(rapidjson::kObjectType);
