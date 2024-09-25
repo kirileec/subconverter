@@ -2086,7 +2086,7 @@ static std::string removeQueryParam(const std::string& url)
 static rapidjson::Value buildSingBoxTransport(const Proxy& proxy, rapidjson::MemoryPoolAllocator<>& allocator)
 {
     rapidjson::Value transport(rapidjson::kObjectType);
-
+    std::string processedPath = proxy.Path;
     switch (hash_(proxy.TransferProtocol))
     {
         case "http"_hash:
@@ -2101,7 +2101,6 @@ static rapidjson::Value buildSingBoxTransport(const Proxy& proxy, rapidjson::Mem
             if (proxy.Path.empty())
                 transport.AddMember("path", "/", allocator);
             else
-                std::string processedPath = proxy.Path;
                 processedPath = removeQueryParam(proxy.Path);
                 transport.AddMember("path", rapidjson::StringRef(processedPath.c_str()), allocator);
 
