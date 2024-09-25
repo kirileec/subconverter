@@ -2087,11 +2087,11 @@ static rapidjson::Value buildSingBoxTransport(const Proxy& proxy, rapidjson::Mem
 {
     rapidjson::Value transport(rapidjson::kObjectType);
     std::string processedPath = proxy.Path;
-    writeLog(LOG_TYPE_INFO, "Node path:" + processedPath + " - "+ processedPath.c_str());
     // Replace "?ed=2048" with an empty string
     if (!proxy.Path.empty()) {
         processedPath = replaceQueryParam(proxy.Path, "?ed=2048");
     }
+    
     switch (hash_(proxy.TransferProtocol))
     {
         case "http"_hash:
@@ -2102,6 +2102,7 @@ static rapidjson::Value buildSingBoxTransport(const Proxy& proxy, rapidjson::Mem
         }
         case "ws"_hash:
         {
+            writeLog(LOG_TYPE_INFO, "Node path:" + proxy.Path + " - "+ processedPath.c_str());
             transport.AddMember("type", rapidjson::StringRef(proxy.TransferProtocol.c_str()), allocator);
             if (proxy.Path.empty())
                 transport.AddMember("path", "/", allocator);
