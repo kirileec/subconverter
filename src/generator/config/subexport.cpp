@@ -2087,6 +2087,7 @@ static rapidjson::Value buildSingBoxTransport(const Proxy& proxy, rapidjson::Mem
 {
     rapidjson::Value transport(rapidjson::kObjectType);
     std::string processedPath = proxy.Path;
+    writeLog(LOG_TYPE_INFO, "Node path:" + processedPath);
     // Replace "?ed=2048" with an empty string
     if (!proxy.Path.empty()) {
         processedPath = replaceQueryParam(proxy.Path, "?ed=2048");
